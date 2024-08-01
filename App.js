@@ -7,27 +7,41 @@
 
 import React, { useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import { ImageBackground, StyleSheet, View} from 'react-native';
+import { ImageBackground, SafeAreaView, StyleSheet, View} from 'react-native';
 import StartGameScreen from './screens/StartGameScreen';
 import GameScreen from './screens/GameScreen';
-
+import Colors  from "./contants/Colors";
+import GameOverScreen from './screens/GameOverScreen';
    function App(){
-    const[userNumber,setUserNumber]=useState(0)
+    const[userNumber,setUserNumber]=useState()
+    const[gameOver,setgameOverr]=useState(true)
     function pickedNumberHandler(pickNumber){
       setUserNumber(pickNumber)
+      setgameOverr(false)
+    }
+    function gameOverHandler(){
+      setgameOverr(true)
     }
     let Screen =<StartGameScreen numberPicked={pickedNumberHandler}/>
     if(userNumber){
-      Screen=<GameScreen/>
+      Screen=<GameScreen userNumber={userNumber} onGameOver={gameOverHandler}/>
     }
-    return(
-    <LinearGradient colors={["#4e0329","#ddb52f"]} style={styles.rootScreen}>
-     <ImageBackground source={require("./assets/background.png")} style={styles.rootScreen} resizeMode="cover" 
-     imageStyle={styles.backgroundImage}>
-    {Screen}
-    </ImageBackground>
-    </LinearGradient>
-    )
+    if(gameOver && userNumber){
+      Screen=<GameOverScreen/>
+    }
+     return (
+       <LinearGradient colors={[Colors.primary700, Colors.accent500]} style={[styles.rootScreen]} >
+         <ImageBackground source={require("./assets/background.png")} style={{ flex: 1 }} resizeMode="over" borderRadius={2}
+           imageStyle={styles.backgroundImage}
+         >
+
+           <SafeAreaView style={{flex:1}}>
+           {Screen}
+           </SafeAreaView>
+
+         </ImageBackground>
+       </LinearGradient>
+     )
    }
 
 const styles = StyleSheet.create({
@@ -35,14 +49,15 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 15,
     paddingRight: 15,
-    borderRadius: 5
+    borderRadius: 5,
+  
   },
   backgroundImage:{
     opacity:0.15
   },
 rootScreen:{
   flex:1,
-  backgroundColor:"#ddb52f"
+  backgroundColor:Colors.accent500
 }
 })
 
